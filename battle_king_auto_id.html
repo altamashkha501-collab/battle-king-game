@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Battle King</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101827;color:#fff;font-family:Arial;text-align:center}header{padding:15px;background:#17243a}h1{margin:4px;color:#ffd34e}button{border:0;border-radius:12px;padding:14px 20px;background:#ffc83d;color:#171717;font-weight:bold;font-size:17px;margin:7px}#profile{padding:20px}#game{display:none;max-width:700px;margin:auto;padding:8px}canvas{width:100%;background:#729b50;border:3px solid #e6c15a;border-radius:12px;touch-action:none}#controls{display:flex;justify-content:space-around;flex-wrap:wrap}.small{color:#cbd5e1;font-size:13px}
+</style></head><body><header><h1>👑 BATTLE KING 👑</h1><div class="small">Mini Arena Game</div></header>
+<section id="profile"><h2>Welcome, Player!</h2><p id="pid">Player ID banane ke liye button dabao.</p><button id="create">CREATE ID</button><br><button id="play" disabled>PLAY</button><p class="small">ID is device par save rahegi.</p></section>
+<section id="game"><p>❤️ HP: <span id="hp">100</span> | 🪙 Coins: <span id="coins">0</span> | Score: <span id="score">0</span></p><canvas id="arena" width="640" height="420"></canvas><div id="controls"><button id="move">MOVE ➜</button><button id="fire">FIRE 🔥</button><button id="home">HOME</button></div><p class="small">MOVE se aage badho, FIRE se target hit karo.</p></section>
+<script>
+const $=x=>document.getElementById(x);let id=localStorage.getItem('bk_id');
+function show(){if(id){$('pid').textContent='Your Player ID: '+id;$('create').textContent='ID CREATED ✓';$('play').disabled=false}}show();
+$('create').onclick=()=>{if(!id){id='BK'+Math.floor(100000+Math.random()*900000);localStorage.setItem('bk_id',id)}show()};
+let c=$('arena'),ctx=c.getContext('2d'),x=90,y=210,targets=[],score=0,coins=0,hp=100;
+function draw(){ctx.clearRect(0,0,640,420);ctx.fillStyle='#729b50';ctx.fillRect(0,0,640,420);ctx.strokeStyle='#8caf68';for(let i=0;i<640;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,420);ctx.stroke()}ctx.fillStyle='#2457cf';ctx.beginPath();ctx.arc(x,y,18,0,7);ctx.fill();ctx.fillStyle='white';ctx.fillText('YOU',x-12,y-25);targets.forEach(t=>{ctx.fillStyle='#b52d2d';ctx.beginPath();ctx.arc(t.x,t.y,14,0,7);ctx.fill()})}
+$('play').onclick=()=>{$('profile').style.display='none';$('game').style.display='block';draw()};
+$('move').onclick=()=>{x=Math.min(610,x+35);y=Math.max(25,Math.min(395,y+Math.random()*50-25));draw()};
+$('fire').onclick=()=>{let i=targets.findIndex(t=>Math.abs(t.x-x)<230&&Math.abs(t.y-y)<90);if(i>=0){targets.splice(i,1);score+=10;coins+=2}else score++;$('score').textContent=score;$('coins').textContent=coins;draw()};
+$('home').onclick=()=>{$('game').style.display='none';$('profile').style.display='block'};
+setInterval(()=>{if($('game').style.display==='block'){targets.push({x:550,y:40+Math.random()*330});targets=targets.filter(t=>t.x>-20);targets.forEach(t=>t.x-=2);draw()}},900);
+</script></body></html>
